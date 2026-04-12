@@ -4,6 +4,8 @@
 
 The **Dynamic Ensemble** module provides a framework for combining multiple reinforcement learning (RL) agents into a single decision-making system using a **mixture distribution over policies**. This allows the ensemble to adaptively weight agents based on performance, uncertainty, or fixed configurations.
 
+The framework is designed to be **environment-agnostic** and can be used with both custom environments (e.g. grid-based or partially observable mazes) and standard **Gymnasium discrete-action environments** such as `LunarLander-v3`, `CartPole-v1`, and other classic control tasks.
+
 The key component is:
 
 * `MixtureDistributionEnsemble`: Combines multiple agents using either **dynamic weighting** or **fixed weighting**
@@ -19,7 +21,11 @@ This README covers:
 
 ## 1. Creating a Simple Agent (DDQN Example)
 
-Below is a minimal example of creating and training a **Double Deep Q-Network (DDQN)** agent.
+Below are minimal examples of creating and training a **Double Deep Q-Network (DDQN)** agent on both a custom environment and a standard Gymnasium discrete-action environment.
+
+---
+
+### Example 1: Custom Grid Environment
 
 ```python
 import gymnasium as gym
@@ -42,9 +48,6 @@ env = gym.make(
     render_flag=False
 )
 
-# Alternative environment
-# env = gym.make("LunarLander-v3")
-
 agent = DDQN(
     env,
     buffer_size=1000,
@@ -52,6 +55,27 @@ agent = DDQN(
     hidden_dims=(128, 64),
     lr=0.00025,
     tau=0.01,
+    seed=alg_seed,
+    env_seed=env_seed
+)
+
+agent.train(num_episodes)
+```
+
+### Example 2: Gymnasium Discrete Environment (LunarLander)
+```python
+import gymnasium as gym
+from Algorithms.DDQN import DDQN
+
+env = gym.make("LunarLander-v3")
+
+agent = DDQN(
+    env,
+    buffer_size=20000,
+    batch_size=64,
+    hidden_dims=(256, 128),
+    lr=2.5e-4,
+    tau=0.005,
     seed=alg_seed,
     env_seed=env_seed
 )
